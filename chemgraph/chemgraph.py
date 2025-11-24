@@ -12,15 +12,17 @@ from . import constants
 class ChemGraph:
     name: str | None = None
     """Name of the molecule."""
-    graph: nx.Graph | None = nx.Graph()
+    graph: nx.Graph = nx.Graph()
     """Graph representation of the molecule."""
+
+    # ============================================================= #
 
     def __post_init__(self):
         """
-            Normalize graph after initialization:
-            - enforce node schema
-            - enforce edge schema
-            - enforce graph metadata schema
+        Normalize graph after initialization:
+        - enforce node schema
+        - enforce edge schema
+        - enforce graph metadata schema
         """
         # === Enforce graph-level schema === #
         for key, default in constants.GRAPH_SCHEMA.items():
@@ -40,32 +42,82 @@ class ChemGraph:
             for key, default in constants.EDGE_SCHEMA.items():
                 attrs.setdefault(key, default)
 
+    # ============================================================= #
+
     @classmethod
-    def from_file(cls, path: str | Path,  fmt: str | Path | None = None) -> Chemgraph:
+    def from_file(
+        cls,
+        path: str | Path,
+        name: str | None = None,
+        fmt: str | Path | None = None,
+        **kwargs,
+    ) -> ChemGraph:
         """
-            Create a Chemgraph instance from a .xyz file.
+        Create a Chemgraph instance from a file.
 
-            Args:
-            -----
-                path: Path | Str
-                    Path to the file to read into a Chemgraph.
-                fmt: str | None
-                    Default: None.
-                    Format of the file. 
-                    If the format is None, extension of the path is used as file format.
-                    Accepted formats: xyz
+        Args:
+        -----
+            path: Path | str
+                Path to the file to read into a Chemgraph.
+            name: str | None
+                Default: None.
+                Name of the ChemGraph instance.
+            fmt: str | None
+                Default: None.
+                Format of the file.
+                If the format is None, extension of the path is used as file format.
+                Accepted formats: xyz
 
-            Returns:
-            --------
-                Chemgraph: 
-                    New ChemGraph instance with data from the .xyz file. 
+        Returns:
+        --------
+            Chemgraph:
+                New ChemGraph instance with data from the .xyz file.
         """
         if fmt is None:
-            fmt = Path(path).suffix.lstrip('.').lower()
+            fmt = Path(path).suffix.lstrip(".").lower()
 
         reader = registry.readers.get(fmt)
 
         if reader is None:
-            raise ValueError("No reader registered for format .xyz")
-        data = reader(path)
+            raise ValueError(f"No reader registered for format {fmt}")
+
+        data = reader(path, **kwargs)
+
+        if name is not None:
+            data["name"] = name
+
         return cls(**data)
+
+    # ============================================================= #
+
+    def to_file(
+        self, path: str | Path, fmt: str | Path | None = None, **kwargs
+    ) -> None:
+        """
+        Writes a ChemGraph instance to a file.
+
+        Args:
+        -----
+            path: Path | str
+                Path to the file to write the Chemgraph to.
+            fmt: str | None
+                Default: None.
+                Format of the file.
+                If the format is None, extension of the path is used as file format.
+                Accepted formats: xyz
+
+        Returns:
+        --------
+            None
+        """
+        if fmt is None:
+            fmt = Path(path).suffix.lstrip(".").lower()
+
+        writer = registry.writers.get(fmt)
+
+        if writer is None:
+            raise ValueError(f"No reader registered for format {fmt}")
+
+        writer(self, path, **kwargs)
+
+        return None
