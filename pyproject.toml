@@ -1,0 +1,11 @@
+[project]
+name = "chemgraph"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "networkx>=3.5",
+    "numpy>=2.3.5",
+    "pytest>=9.0.1",
+]
