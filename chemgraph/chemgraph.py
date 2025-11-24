@@ -5,12 +5,40 @@ from pathlib import Path
 
 from chemgraph.io import registry
 
+from . import constants
+
+
 @dataclass
-class Chemgraph:
+class ChemGraph:
     name: str | None = None
     """Name of the molecule."""
-    graph: nx.Graph | None = None
+    graph: nx.Graph | None = nx.Graph()
     """Graph representation of the molecule."""
+
+    def __post_init__(self):
+        """
+            Normalize graph after initialization:
+            - enforce node schema
+            - enforce edge schema
+            - enforce graph metadata schema
+        """
+        # === Enforce graph-level schema === #
+        for key, default in constants.GRAPH_SCHEMA.items():
+            self.graph.graph.setdefault(key, default)
+
+        # Optionally propagate the Chemgraph "name"
+        if self.name is not None:
+            self.graph.graph.setdefault("name", self.name)
+
+        # === Enforce node schema === #
+        for node, attrs in self.graph.nodes(data=True):
+            for key, default in constants.NODE_SCHEMA.items():
+                attrs.setdefault(key, default)
+
+        # === Enforce edge schema === #
+        for u, v, attrs in self.graph.edges(data=True):
+            for key, default in constants.EDGE_SCHEMA.items():
+                attrs.setdefault(key, default)
 
     @classmethod
     def from_file(cls, path: str | Path,  fmt: str | Path | None = None) -> Chemgraph:

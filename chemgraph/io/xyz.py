@@ -2,6 +2,8 @@ from .registry import register_reader
 import networkx as nx
 import numpy as np
 
+from .. import constants
+
 @register_reader('xyz')
 def read_xyz(path_xyz):
     """
@@ -23,9 +25,11 @@ def read_xyz(path_xyz):
             position  = np.array(parts[1:])
 
             graph.add_node(node_for_adding = ind_line, 
-                           element = atom_type,
+                           atom_number = constants.ATOMIC_NUM[atom_type],
                            position = position
                            )
+            
+        graph.graph['description'] = comment
 
     return {
         'name': 'Test',
