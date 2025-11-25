@@ -8,4 +8,5 @@ dependencies = [
     "networkx>=3.5",
     "numpy>=2.3.5",
     "pytest>=9.0.1",
+    "rdkit>=2025.9.1",
 ]

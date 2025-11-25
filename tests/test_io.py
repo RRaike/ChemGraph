@@ -3,6 +3,7 @@ import pytest
 from chemgraph.chemgraph import ChemGraph as cg
 from pathlib import Path
 
+import rdkit.Chem
 
 def test_non_existent_file():
     with pytest.raises(FileNotFoundError):
@@ -39,3 +40,14 @@ def test_xyz_writer():
     assert chemgraph.graph.nodes(data=True) == chemgraph_2.graph.nodes(data=True)
     assert path_write.exists()
     path_write.unlink()
+
+
+
+from rdkit.Chem import Draw
+# from rdkit.Chem.Draw import IPythonConsole
+
+mol = rdkit.Chem.rdmolfiles.MolFromSmiles('c1ccccc1C=CC#C')
+# Draw.MolToFile(mol, 'test.png')
+# print(mol)
+chemgraph = cg.from_file(mol, fmt = 'mol')
+
