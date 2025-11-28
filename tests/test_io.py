@@ -3,6 +3,8 @@ import pytest
 from chemgraph.chemgraph import ChemGraph as cg
 from pathlib import Path
 
+import rdkit.Chem
+
 
 def test_non_existent_file():
     with pytest.raises(FileNotFoundError):
@@ -39,3 +41,20 @@ def test_xyz_writer():
     assert chemgraph.graph.nodes(data=True) == chemgraph_2.graph.nodes(data=True)
     assert path_write.exists()
     path_write.unlink()
+
+
+def test_io_mol():
+    smiles = "c1ccccc1C=CC#C"
+    rdkit_mol = rdkit.Chem.rdmolfiles.MolFromSmiles(smiles)
+    smiles_restructured = rdkit.Chem.MolToSmiles(
+        rdkit_mol
+    )  # RDkit can reshuffle a SMILES
+
+    chemgraph = cg.from_file(rdkit_mol, fmt="mol")
+
+    assert len(chemgraph.graph.nodes()) == rdkit_mol.GetNumAtoms()
+
+    mol_obj = chemgraph.to_file(fmt="mol")
+    smiles_cg = rdkit.Chem.MolToSmiles(mol_obj)
+
+    assert smiles_restructured == smiles_cg

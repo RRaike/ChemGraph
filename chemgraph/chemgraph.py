@@ -47,7 +47,7 @@ class ChemGraph:
     @classmethod
     def from_file(
         cls,
-        path: str | Path,
+        path_or_file: Path | str | object,
         name: str | None = None,
         fmt: str | Path | None = None,
         **kwargs,
@@ -57,8 +57,8 @@ class ChemGraph:
 
         Args:
         -----
-            path: Path | str
-                Path to the file to read into a Chemgraph.
+            path_or_file: Path | str | object
+                Path to the file or object to read into a Chemgraph.
             name: str | None
                 Default: None.
                 Name of the ChemGraph instance.
@@ -74,14 +74,18 @@ class ChemGraph:
                 New ChemGraph instance with data from the .xyz file.
         """
         if fmt is None:
-            fmt = Path(path).suffix.lstrip(".").lower()
+            if not isinstance(path_or_file, (str, Path)):
+                raise ValueError(
+                    "Format must be specified when path_or_file is not a string or Path."
+                )
+            fmt = Path(path_or_file).suffix.lstrip(".").lower()
 
         reader = registry.readers.get(fmt)
 
         if reader is None:
             raise ValueError(f"No reader registered for format {fmt}")
 
-        data = reader(path, **kwargs)
+        data = reader(path_or_file, **kwargs)
 
         if name is not None:
             data["name"] = name
@@ -91,7 +95,7 @@ class ChemGraph:
     # ============================================================= #
 
     def to_file(
-        self, path: str | Path, fmt: str | Path | None = None, **kwargs
+        self, path: str | Path | None = None, fmt: str | Path | None = None, **kwargs
     ) -> None:
         """
         Writes a ChemGraph instance to a file.
@@ -104,13 +108,16 @@ class ChemGraph:
                 Default: None.
                 Format of the file.
                 If the format is None, extension of the path is used as file format.
-                Accepted formats: xyz
+                Accepted formats: xyz, mol
 
         Returns:
         --------
-            None
+            written: fmt | None
+                The specified format is returned if path is not specified.
         """
         if fmt is None:
+            if path is None:
+                raise ValueError("Format must be specified when path is None.")
             fmt = Path(path).suffix.lstrip(".").lower()
 
         writer = registry.writers.get(fmt)
@@ -118,6 +125,10 @@ class ChemGraph:
         if writer is None:
             raise ValueError(f"No reader registered for format {fmt}")
 
-        writer(self, path, **kwargs)
+        if path is not None:
+            writer(self, path, **kwargs)
+            written = None
+        else:
+            written = writer(self, **kwargs)
 
-        return None
+        return written
