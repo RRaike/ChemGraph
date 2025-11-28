@@ -4,7 +4,7 @@ import numpy as np
 
 from pathlib import Path
 
-from .. import constants
+from ..constants import periodic_table
 
 
 @register_reader("xyz")
@@ -45,7 +45,7 @@ def read_xyz(path_xyz: str | Path) -> dict:
 
             graph.add_node(
                 node_for_adding=ind_line,
-                atom_number=constants.ATOMIC_NUM[atom_type],
+                atom_number=periodic_table.ATOMIC_NUM[atom_type],
                 position=position,
             )
 
@@ -78,7 +78,7 @@ def write_xyz(chemgraph, path: str | Path, precision="%22.15f"):
 
         for node, data in data_graph:
             file.write(
-                f"{constants.ATOMIC_SYMBOLS[data['atom_number']]}"
+                f"{periodic_table.ATOMIC_SYMBOLS[data['atom_number']]}"
                 + f" {precision % data['position'][0]}"
                 + f" {precision % data['position'][1]}"
                 + f" {precision % data['position'][2]}\n"

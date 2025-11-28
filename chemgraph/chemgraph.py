@@ -5,7 +5,7 @@ from pathlib import Path
 
 from chemgraph.io import registry
 
-from . import constants
+import constants.graph
 
 
 @dataclass
@@ -25,7 +25,7 @@ class ChemGraph:
         - enforce graph metadata schema
         """
         # === Enforce graph-level schema === #
-        for key, default in constants.GRAPH_SCHEMA.items():
+        for key, default in constants.graph.GRAPH_SCHEMA.items():
             self.graph.graph.setdefault(key, default)
 
         # Optionally propagate the Chemgraph "name"
@@ -34,12 +34,12 @@ class ChemGraph:
 
         # === Enforce node schema === #
         for node, attrs in self.graph.nodes(data=True):
-            for key, default in constants.NODE_SCHEMA.items():
+            for key, default in constants.graph.NODE_SCHEMA.items():
                 attrs.setdefault(key, default)
 
         # === Enforce edge schema === #
         for u, v, attrs in self.graph.edges(data=True):
-            for key, default in constants.EDGE_SCHEMA.items():
+            for key, default in constants.graph.EDGE_SCHEMA.items():
                 attrs.setdefault(key, default)
 
     # ============================================================= #
