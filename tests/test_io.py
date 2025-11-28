@@ -5,6 +5,7 @@ from pathlib import Path
 
 import rdkit.Chem
 
+
 def test_non_existent_file():
     with pytest.raises(FileNotFoundError):
         path_xyz = Path(__file__).parent / "files" / "non_existent_file.xyz"
@@ -42,12 +43,18 @@ def test_xyz_writer():
     path_write.unlink()
 
 
+def test_io_mol():
+    smiles = "c1ccccc1C=CC#C"
+    rdkit_mol = rdkit.Chem.rdmolfiles.MolFromSmiles(smiles)
+    smiles_restructured = rdkit.Chem.MolToSmiles(
+        rdkit_mol
+    )  # RDkit can reshuffle a SMILES
 
-from rdkit.Chem import Draw
-# from rdkit.Chem.Draw import IPythonConsole
+    chemgraph = cg.from_file(rdkit_mol, fmt="mol")
 
-mol = rdkit.Chem.rdmolfiles.MolFromSmiles('c1ccccc1C=CC#C')
-# Draw.MolToFile(mol, 'test.png')
-# print(mol)
-chemgraph = cg.from_file(mol, fmt = 'mol')
+    assert len(chemgraph.graph.nodes()) == rdkit_mol.GetNumAtoms()
 
+    mol_obj = chemgraph.to_file(fmt="mol")
+    smiles_cg = rdkit.Chem.MolToSmiles(mol_obj)
+
+    assert smiles_restructured == smiles_cg
