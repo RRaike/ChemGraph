@@ -5,7 +5,7 @@ from pathlib import Path
 
 from chemgraph.io import registry
 
-import constants.graph
+from .constants import graph as constants_graph
 
 
 @dataclass
@@ -25,7 +25,7 @@ class ChemGraph:
         - enforce graph metadata schema
         """
         # === Enforce graph-level schema === #
-        for key, default in constants.graph.GRAPH_SCHEMA.items():
+        for key, default in constants_graph.GRAPH_SCHEMA.items():
             self.graph.graph.setdefault(key, default)
 
         # Optionally propagate the Chemgraph "name"
@@ -34,12 +34,12 @@ class ChemGraph:
 
         # === Enforce node schema === #
         for node, attrs in self.graph.nodes(data=True):
-            for key, default in constants.graph.NODE_SCHEMA.items():
+            for key, default in constants_graph.NODE_SCHEMA.items():
                 attrs.setdefault(key, default)
 
         # === Enforce edge schema === #
         for u, v, attrs in self.graph.edges(data=True):
-            for key, default in constants.graph.EDGE_SCHEMA.items():
+            for key, default in constants_graph.EDGE_SCHEMA.items():
                 attrs.setdefault(key, default)
 
     # ============================================================= #
@@ -132,3 +132,25 @@ class ChemGraph:
             written = writer(self, **kwargs)
 
         return written
+
+    # ============================================================= #
+
+    def supress_hydrogens(self):
+        """
+        Returns the ChemGraph instance with Hydrogens removed.
+
+        Args:
+        -----
+            self: ChemGraph
+
+        Returns:
+        --------
+            self: ChemGraph
+        """
+        indx_H = [
+            ind_n
+            for ind_n, _ in self.graph.nodes(data=True)
+            if self.graph.nodes[ind_n["atom_number"]] == 1
+        ]
+        self.graph.remove_nodes_from(indx_H)
+        return self

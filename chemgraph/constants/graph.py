@@ -9,6 +9,7 @@ EDGE_SCHEMA = {
 
 GRAPH_SCHEMA = {
     "name": None,
+    "type": None,
     "description": None,
     "spin": None,
     "charge": None,
