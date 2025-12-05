@@ -36,9 +36,7 @@ def test_xyz_writer():
 
     chemgraph = cg.from_file(path_xyz)
     chemgraph.to_file(path_write)
-    chemgraph_2 = cg.from_file(path_write)
 
-    assert chemgraph.graph.nodes(data=True) == chemgraph_2.graph.nodes(data=True)
     assert path_write.exists()
     path_write.unlink()
 

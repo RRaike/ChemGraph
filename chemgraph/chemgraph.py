@@ -5,7 +5,7 @@ from pathlib import Path
 
 from chemgraph.io import registry
 
-from . import constants
+from .constants import graph as constants_graph
 
 
 @dataclass
@@ -20,12 +20,12 @@ class ChemGraph:
     def __post_init__(self):
         """
         Normalize graph after initialization:
-        - enforce node schema
-        - enforce edge schema
-        - enforce graph metadata schema
+        - Enforce node schema
+        - Enforce edge schema
+        - Enforce graph metadata schema
         """
         # === Enforce graph-level schema === #
-        for key, default in constants.GRAPH_SCHEMA.items():
+        for key, default in constants_graph.GRAPH_SCHEMA.items():
             self.graph.graph.setdefault(key, default)
 
         # Optionally propagate the Chemgraph "name"
@@ -34,12 +34,12 @@ class ChemGraph:
 
         # === Enforce node schema === #
         for node, attrs in self.graph.nodes(data=True):
-            for key, default in constants.NODE_SCHEMA.items():
+            for key, default in constants_graph.NODE_SCHEMA.items():
                 attrs.setdefault(key, default)
 
         # === Enforce edge schema === #
         for u, v, attrs in self.graph.edges(data=True):
-            for key, default in constants.EDGE_SCHEMA.items():
+            for key, default in constants_graph.EDGE_SCHEMA.items():
                 attrs.setdefault(key, default)
 
     # ============================================================= #
@@ -96,7 +96,7 @@ class ChemGraph:
 
     def to_file(
         self, path: str | Path | None = None, fmt: str | Path | None = None, **kwargs
-    ) -> None:
+    ):
         """
         Writes a ChemGraph instance to a file.
 
@@ -132,3 +132,27 @@ class ChemGraph:
             written = writer(self, **kwargs)
 
         return written
+
+    # ============================================================= #
+
+    def supress_hydrogens(self) -> ChemGraph:
+        """
+        Returns the ChemGraph instance with Hydrogens removed.
+
+        Args:
+        -----
+            self: ChemGraph
+
+        Returns:
+        --------
+            self: ChemGraph
+        """
+        indx_H = [
+            ind_n
+            for ind_n, _ in self.graph.nodes(data=True)
+            if self.graph.nodes[ind_n["atom_number"]] == 1
+        ]
+        self.graph.remove_nodes_from(indx_H)
+        return self
+
+    # ============================================================= #
