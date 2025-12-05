@@ -5,6 +5,8 @@ from pathlib import Path
 
 import rdkit.Chem
 
+import ase.io
+
 
 def test_non_existent_file():
     with pytest.raises(FileNotFoundError):
@@ -56,3 +58,13 @@ def test_io_mol():
     smiles_cg = rdkit.Chem.MolToSmiles(mol_obj)
 
     assert smiles_restructured == smiles_cg
+
+
+def test_io_atoms():
+    PATH_XYZ_AZULENE = Path(__file__).parent / "files" / "azulene.xyz"
+    atoms = ase.io.read(PATH_XYZ_AZULENE, index=-1)
+
+    chemgraph = cg.from_file(atoms, fmt="atoms")
+    atoms_cg = chemgraph.to_file(fmt="atoms")
+
+    assert atoms == atoms_cg

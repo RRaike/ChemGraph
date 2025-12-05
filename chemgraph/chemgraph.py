@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from chemgraph.io import registry
+from chemgraph.inference.bonds import REGISTRY_INFERENCE_BONDS
 
 from .constants import graph as constants_graph
 
@@ -156,3 +157,12 @@ class ChemGraph:
         return self
 
     # ============================================================= #
+
+    def infer_bonds(self, method="cov_radii", **kwargs):
+        """ """
+
+        inference_function = REGISTRY_INFERENCE_BONDS[method]
+
+        self = inference_function(self, **kwargs)
+
+        return self
