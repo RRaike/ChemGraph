@@ -71,4 +71,22 @@ def test_kier_mkappa():
                 assert kier_kappa_cg == kier_kappa_g
 
 
-# def test_
+def test_kier_phi():
+    """
+    Tests Kier Phi felexibility metrics for graphs and chemgraphs.
+    """
+    smiles = "c1ccccc1C=CC#C"
+
+    rdkit_mol = rdkit.Chem.rdmolfiles.MolFromSmiles(smiles)
+    chemgraph = cg.from_file(rdkit_mol, fmt="mol")
+    graph = chemgraph.graph
+
+    kier_phi_cg = flexibility.kier_phi(
+        chemgraph_or_graph=chemgraph, alpha=False, mode="a"
+    )
+    assert isinstance(kier_phi_cg, float)
+
+    kier_phi_g = flexibility.kier_phi(chemgraph_or_graph=graph, alpha=False, mode="a")
+    assert isinstance(kier_phi_g, float)
+
+    assert kier_phi_cg == kier_phi_g

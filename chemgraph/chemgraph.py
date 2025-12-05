@@ -96,7 +96,7 @@ class ChemGraph:
 
     def to_file(
         self, path: str | Path | None = None, fmt: str | Path | None = None, **kwargs
-    ) -> None:
+    ):
         """
         Writes a ChemGraph instance to a file.
 
@@ -135,7 +135,7 @@ class ChemGraph:
 
     # ============================================================= #
 
-    def supress_hydrogens(self):
+    def supress_hydrogens(self) -> ChemGraph:
         """
         Returns the ChemGraph instance with Hydrogens removed.
 
@@ -154,3 +154,5 @@ class ChemGraph:
         ]
         self.graph.remove_nodes_from(indx_H)
         return self
+
+    # ============================================================= #

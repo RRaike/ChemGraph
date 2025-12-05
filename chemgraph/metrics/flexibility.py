@@ -325,7 +325,7 @@ def kier_phi(
     chemgraph_or_graph: chemgraph.ChemGraph | nx.Graph,
     alpha: bool = False,
     mode: str = "a",
-):
+) -> float:
     """
     Compute the Kier phi descriptor of a molecule.
     Quantify molecular shape and branching in a size-normalized way.
@@ -378,7 +378,7 @@ def kier_phi(
 
 def crest_flex(
     chemgraph_or_graph: chemgraph.ChemGraph | nx.Graph, bo_label="bond_order"
-):
+) -> float:
     """
     Compute the flexibility score of a molecule from its graph.
 
