@@ -41,7 +41,7 @@ def kier_alpha(
     chemgraph_or_graph: nx.Graph | chemgraph.ChemGraph,
     radii: dict = periodic_table.COVALENT_RADII,
     mode: str = "a",
-):
+) -> float:
     """
     Compute the alpha correction factor for Kier indices based on atomic radii.
 
@@ -115,7 +115,7 @@ def kier_alpha(
 # -------------------------------------------------------------------------------------- #
 
 
-def molecular_shannon_i(chemgraph_or_graph: nx.Graph | chemgraph.ChemGraph):
+def molecular_shannon_i(chemgraph_or_graph: nx.Graph | chemgraph.ChemGraph) -> float:
     """
     Compute the Shannon entropy of the atom types in a graph.
     Calculates the Shannon entropy of the molecule without taking Hydrogens into account.
@@ -274,7 +274,7 @@ def kier_mkappa(
         indx_H = [
             ind_n
             for ind_n, _ in g.nodes(data=True)
-            if g.nodes[ind_n["atom_number"]] == 1
+            if g.nodes[ind_n]["atom_number"] == 1
         ]
         g.remove_nodes_from(indx_H)
 

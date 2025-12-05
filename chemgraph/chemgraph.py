@@ -20,9 +20,9 @@ class ChemGraph:
     def __post_init__(self):
         """
         Normalize graph after initialization:
-        - enforce node schema
-        - enforce edge schema
-        - enforce graph metadata schema
+        - Enforce node schema
+        - Enforce edge schema
+        - Enforce graph metadata schema
         """
         # === Enforce graph-level schema === #
         for key, default in constants_graph.GRAPH_SCHEMA.items():
