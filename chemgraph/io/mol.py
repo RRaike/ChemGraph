@@ -3,6 +3,7 @@ import networkx as nx
 
 import rdkit.Chem
 from rdkit.Geometry import Point3D
+import numpy as np
 
 
 RDKIT_TO_BO = {
@@ -47,6 +48,7 @@ def read_mol(mol: rdkit.Chem.rdchem.Mol, ind_conformer=0) -> dict:
 
         if has_positions:
             position = conf.GetAtomPosition(atom.GetIdx())
+            position = np.array(position)
 
         graph.add_node(
             node_for_adding=atom.GetIdx(), atom_number=atom_number, position=position
