@@ -5,8 +5,11 @@ from pathlib import Path
 
 from chemgraph.io import registry
 from chemgraph.inference.bonds import REGISTRY_INFERENCE_BONDS
+from chemgraph.geometry.parser.registry import REGISTRY_GEOMETRY_PARSER
 
 from .constants import graph as constants_graph
+
+from typing import List
 
 
 @dataclass
@@ -167,3 +170,27 @@ class ChemGraph:
         self.graph.add_edges_from(edges)
 
         return self
+
+    # ============================================================= #
+
+    def parse_geometry(self, geometry_parser: str | List[str]) -> dict:
+        """
+        Parses the specified geometry from the ChemGraph instance.
+
+        Args:
+        -----
+            geometry_parser: String
+                Defines the geoemetry that should be parsed.
+                Options: bonds, angles, dihedrals, or a list of these.
+        """
+        if not isinstance(geometry_parser, list):
+            geometry_parser = [
+                geometry_parser,
+            ]
+
+        parsed_geometry = dict()
+        for parser in geometry_parser:
+            parser_func = REGISTRY_GEOMETRY_PARSER[parser]
+            parsed_geometry[parser] = parser_func(self)
+
+        return parsed_geometry
