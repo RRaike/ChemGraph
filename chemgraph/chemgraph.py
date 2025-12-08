@@ -163,6 +163,7 @@ class ChemGraph:
 
         inference_function = REGISTRY_INFERENCE_BONDS[method]
 
-        self = inference_function(self, **kwargs)
+        edges = inference_function(self, **kwargs)
+        self.graph.add_edges_from(edges)
 
         return self
