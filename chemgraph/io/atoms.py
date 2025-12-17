@@ -4,9 +4,8 @@ IO from and to ase.Atoms objects.
 
 from .registry import register_reader, register_writer
 from .. import chemgraph
-import ase
-import ase.io
 import networkx as nx
+import ase
 
 
 @register_reader("atoms")

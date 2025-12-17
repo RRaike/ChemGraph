@@ -55,7 +55,7 @@ class ChemGraph:
         name: str | None = None,
         fmt: str | Path | None = None,
         **kwargs,
-    ) -> ChemGraph:
+    ):
         """
         Create a Chemgraph instance from a file.
 
@@ -139,7 +139,7 @@ class ChemGraph:
 
     # ============================================================= #
 
-    def supress_hydrogens(self) -> ChemGraph:
+    def supress_hydrogens(self):
         """
         Returns the ChemGraph instance with Hydrogens removed.
 
