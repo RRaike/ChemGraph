@@ -162,7 +162,21 @@ class ChemGraph:
     # ============================================================= #
 
     def infer_bonds(self, method="cov_radii", **kwargs):
-        """ """
+        f"""
+            Infers the bonds of a ChemGraph from the nodes.
+            Function alters self.
+
+            Args:
+            -----
+                method: (Optional) string
+                    Default: cov_radii
+                    Methodology used to infer the bonds.
+                    Options: {REGISTRY_INFERENCE_BONDS}
+
+            Returns:
+            --------
+                ChemGraph
+        """
 
         inference_function = REGISTRY_INFERENCE_BONDS[method]
 
